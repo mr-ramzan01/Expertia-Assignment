@@ -9,7 +9,8 @@ const db_url = process.env.DB_URL;
 
 
 const connection = async () => {
-    await mongoose.connect(`mongodb+srv://${db_username}:${db_password}@${db_url}/?retryWrites=true&w=majority`, (err) => {
+    mongoose.set('strictQuery', true)
+    await mongoose.connect(`mongodb+srv://${db_username}:${db_password}@${db_url}/expertia_data?retryWrites=true&w=majority`, (err) => {
         if(err) {
             console.log("db not connected");
         }

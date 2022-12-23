@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     }
+},{
+    versionKey: false,
+    timestamps: true
 })
 
 const Users = mongoose.model("users", userSchema);

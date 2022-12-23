@@ -1,12 +1,10 @@
 const express = require('express');
-// const { SignUPUser, LoginUser, forgotPassword, setForgotPassword } = require('../controllers/userController.js');
-// const passwordTokenCheck = require('../middlewares/passwordTokenChecker.js');
+const { SignUPUser, LoginUser, isLoggedInUser } = require('../controllers/userController.js');
 
 const userRouter = express.Router();
 
-// userRouter.post('/signup', SignUPUser);
-// userRouter.post('/login', LoginUser);
-// userRouter.post('/forgot-password/set-new-password', passwordTokenCheck, setForgotPassword);
-// userRouter.post('/forgot-password', forgotPassword);
+userRouter.post('/signup', SignUPUser);
+userRouter.post('/login', LoginUser);
+userRouter.get('/getUsers/:token', isLoggedInUser);
 
 module.exports = userRouter;

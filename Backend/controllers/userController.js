@@ -1,5 +1,3 @@
-const ErrorHandler = require("../middlewares/ErrorHandler.js");
-const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken')
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
@@ -8,10 +6,43 @@ dotenv.config();
 const jwt_secret_key = process.env.JWT_SECRET_KEY;
 
 
+async function isLoggedInUser(req, res) {
+    try {
+        const {token} = req.params;
+        if(!token) {
+            return res.status(401).send({
+                success: true,
+                message: 'token not provided'
+            })
+        }
+
+        try {
+            const data = jwt.verify(token, jwt_secret_key);
+            return res.send({
+                success: true,
+                message: 'verified user',
+                data: data
+            })
+
+        } catch (error) {
+            return res.status(498).send({
+                success: false,
+                message: 'Invalid token'
+            })
+        }
+
+    } catch (error) {
+        // return next(new ErrorHandler(error, 500));
+        return res.status(500).send({
+            success: false,
+            message: error.message
+        });
+    }
+}
 async function LoginUser(req, res) {
     try {
         // Checking User email
-        let existingUser = await Users.findOne({email: req.body.email});
+        let existingUser = await Users.findOne({username: req.body.username});
         if(!existingUser) {
             return res.status(401).send({
                 success: false,
@@ -34,9 +65,10 @@ async function LoginUser(req, res) {
                 httpOnly: true,
                 // secure: true
             };
-            res.status(200).cookie("ocialMedia_token", token, {...options}).send({
+            res.cookie("my_cookie", '123qwe', {...options}).status(200).send({
                 success: true,
                 message: 'Login Successfully',
+                token: token
             })
         }
         else {
@@ -63,15 +95,7 @@ async function SignUPUser(req, res) {
         if(user) {
             return res.status(403).send({
                 success: false,
-                message: 'User already exists'
-            })
-        }
-        // Checking username
-        let username = await Users.findOne({ username: req.body.username})
-        if(username) {
-            return res.status(400).send({
-                success: false,
-                message: 'Username already taken'
+                message: 'User already registered'
             })
         }
         // Hashing Password
@@ -93,9 +117,10 @@ async function SignUPUser(req, res) {
             httpOnly: true,
             // secure: true
         };
-        res.status(200).cookie("ocialMedia_token", token, {...options}).send({
+        res.status(200).send({
             success: true,
             message: 'Signup successfully',
+            token: token
         })
     } catch (error) {
         // return next(new ErrorHandler(error, 500));
@@ -108,4 +133,4 @@ async function SignUPUser(req, res) {
 
 
 
-module.exports = { SignUPUser, LoginUser };
+module.exports = { SignUPUser, LoginUser, isLoggedInUser };
