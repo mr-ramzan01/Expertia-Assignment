@@ -22,7 +22,7 @@ export default function Signup() {
             alert("Password didn't match")
         }
         else {
-            fetch('http://localhost:8080/users/signup', {
+            fetch('https://good-puce-moose-toga.cyclic.app/users/signup', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {

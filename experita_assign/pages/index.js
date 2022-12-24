@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   const isUser = () => {
     const token = getCookie('expertia_auth_token');
-    fetch(`http://localhost:8080/users/getUsers/${token}`)
+    fetch(`https://good-puce-moose-toga.cyclic.app/users/getUsers/${token}`)
     .then((res) => res.json())
     .then((res) => {
       setUserDetails(res.data);
@@ -38,7 +38,7 @@ export default function Dashboard() {
       taskName: value,
       userId: id
     }
-    fetch(`http://localhost:8080/tasks/add`, {
+    fetch(`https://good-puce-moose-toga.cyclic.app/tasks/add`, {
       method: 'POST',
       body: JSON.stringify(Body),
       headers: {
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
   const getData = () => {
     let id = localStorage.getItem("id");
-      fetch(`http://localhost:8080/tasks/${id}`)
+      fetch(`https://good-puce-moose-toga.cyclic.app/tasks/${id}`)
       .then((res) => res.json())
       .then((res) => {
         setData(res.data);
@@ -125,7 +125,7 @@ export default function Dashboard() {
 
 // export const getServerSideProps = async ({ req, res }) => {
 //   const token = getCookie('expertia_auth_token', { req, res });
-//   let result = fetch(`http://localhost:8080/users/getUsers/${token}`)
+//   let result = fetch(`https://good-puce-moose-toga.cyclic.app/users/getUsers/${token}`)
 //   .then((resp) => resp.json())
 
 //   return { props: result };

@@ -10,14 +10,17 @@ const db_url = process.env.DB_URL;
 
 const connection = async () => {
     mongoose.set('strictQuery', true)
-    await mongoose.connect(`mongodb+srv://${db_username}:${db_password}@${db_url}/expertia_data?retryWrites=true&w=majority`, (err) => {
-        if(err) {
-            console.log("db not connected");
-        }
-        else {
-            console.log("db connected")
-        }
-    });
+    await mongoose.connect(`mongodb+srv://${db_username}:${db_password}@${db_url}/expertia_data?retryWrites=true&w=majority`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+
+    })
+    .then((data) => {
+        console.log('connected with server')
+    })
+    .catch(() => {
+        console.log('error connecting to server')
+    })
 }
 
 module.exports = connection;

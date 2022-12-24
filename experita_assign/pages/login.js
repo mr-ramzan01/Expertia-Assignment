@@ -16,7 +16,7 @@ export default function Login() {
     // Submitting the form data
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch('http://localhost:8080/users/login', {
+        fetch('https://good-puce-moose-toga.cyclic.app/users/login', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
