@@ -9,21 +9,26 @@ const jwt_secret_key = process.env.JWT_SECRET_KEY;
 async function isLoggedInUser(req, res) {
     try {
         const {token} = req.params;
+        console.log(token, 'token')
+        // checking token is present or not
         if(!token) {
             return res.status(401).send({
-                success: true,
+                success: false,
                 message: 'token not provided'
             })
         }
 
         try {
-            const data = jwt.decode(token, jwt_secret_key);
-            console.log(data, 'data')
+
+            // getting all data from token and sending to client
+            const data = jwt.verify(token, jwt_secret_key);
+            console.log(data, 'data');
             return res.send({
                 success: true,
                 message: 'verified user',
                 data: data
             })
+
 
         } catch (error) {
             return res.status(498).send({
@@ -33,7 +38,6 @@ async function isLoggedInUser(req, res) {
         }
 
     } catch (error) {
-        // return next(new ErrorHandler(error, 500));
         return res.status(500).send({
             success: false,
             message: error.message
@@ -42,8 +46,10 @@ async function isLoggedInUser(req, res) {
 }
 async function LoginUser(req, res) {
     try {
-        // Checking User username
+        // Checking username
         let existingUser = await Users.findOne({username: req.body.username});
+
+        // if user does not exist 
         if(!existingUser) {
             return res.status(401).send({
                 success: false,
@@ -51,6 +57,7 @@ async function LoginUser(req, res) {
             })
         }
 
+        // Hashing password
         const passwordMatches = await bcrypt.compare(req.body.password, existingUser.password);
         if(passwordMatches) {
 
@@ -61,6 +68,7 @@ async function LoginUser(req, res) {
                 _id: existingUser._id,
             }, jwt_secret_key);
             
+            // Sending successfull response to client
             res.status(200).send({
                 success: true,
                 message: 'Login Successfully',
@@ -74,7 +82,6 @@ async function LoginUser(req, res) {
             })
         }
     } catch (error) {
-        // return next(new ErrorHandler(error, 500));
         return res.status(500).send({
             success: false,
             message: error.message
@@ -86,8 +93,10 @@ async function LoginUser(req, res) {
 
 async function SignUPUser(req, res) {
     try {
-        // Checking User
+        // Checking User 
         let user = await Users.findOne({ email: req.body.email });
+
+        // if user already exists
         if(user) {
             return res.status(403).send({
                 success: false,
@@ -107,19 +116,13 @@ async function SignUPUser(req, res) {
             _id: newUser._id,
         }, jwt_secret_key);
 
-        const options = {
-            expires: new Date(Date.now() + 30*24*60*60*1000),
-            // maxAge: 500000000,
-            httpOnly: true,
-            // secure: true
-        };
-        res.status(200).send({
+        // Sending successfull response to client
+        res.status(201).send({
             success: true,
             message: 'Signup successfully',
             token: token
         })
     } catch (error) {
-        // return next(new ErrorHandler(error, 500));
         return res.status(500).send({
             success: false,
             message: error.message
