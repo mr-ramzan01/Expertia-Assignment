@@ -17,7 +17,8 @@ async function isLoggedInUser(req, res) {
         }
 
         try {
-            const data = jwt.verify(token, jwt_secret_key);
+            const data = jwt.decode(token, jwt_secret_key);
+            console.log(data, 'data')
             return res.send({
                 success: true,
                 message: 'verified user',
@@ -41,7 +42,7 @@ async function isLoggedInUser(req, res) {
 }
 async function LoginUser(req, res) {
     try {
-        // Checking User email
+        // Checking User username
         let existingUser = await Users.findOne({username: req.body.username});
         if(!existingUser) {
             return res.status(401).send({
@@ -56,16 +57,11 @@ async function LoginUser(req, res) {
             // Generating token
             const token = jwt.sign({
                 email: existingUser.email,
+                username: existingUser.username,
                 _id: existingUser._id,
             }, jwt_secret_key);
             
-            const options = {
-                expires: new Date(Date.now() + 30*24*60*60*1000),
-                // maxAge: 500000000,
-                httpOnly: true,
-                // secure: true
-            };
-            res.cookie("my_cookie", '123qwe', {...options}).status(200).send({
+            res.status(200).send({
                 success: true,
                 message: 'Login Successfully',
                 token: token
@@ -107,8 +103,8 @@ async function SignUPUser(req, res) {
         // Generating token
         const token = jwt.sign({
             email: newUser.email,
+            username: newUser.username,
             _id: newUser._id,
-            password: newUser.password
         }, jwt_secret_key);
 
         const options = {
